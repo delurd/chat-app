@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id              String           @id @unique @default(cuid())
+  username        String           @unique
+  email           String           @unique
+  password        String
+  Profile         Profile?
+  Contact         Contacts[]
+  relationContact Contacts[]       @relation("RelationContact")
+  Chats           Chats[]
+  // ChatsTarget     Chats[]          @relation("ChatsTarget")
+  createdAt       DateTime         @default(now())
+  UserConnection  UserConnection[]
+}
+
+model Profile {
+  id          String  @id @unique @default(cuid())
+  userId      String  @unique
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullname    String?
+  description String?
+}
+
+model Contacts {
+  id                String   @id @unique @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  relationContactId String
+  relationContact   User     @relation("RelationContact", fields: [relationContactId], references: [id])
+  createdAt         DateTime @default(now())
+}
+
+model Connections {
+  id    String           @id @unique @default(cuid())
+  name  String?
+  type  String           @default("personal") //personal / group
+  user  UserConnection[]
+  chats Chats[]
+}
+
+model UserConnection {
+  id           String      @id @unique @default(cuid())
+  userId       String
+  user         User        @relation(fields: [userId], references: [id])
+  connectionId String
+  connection   Connections @relation(fields: [connectionId], references: [id])
+}
+
+model Chats {
+  id             String      @id @unique @default(cuid())
+  fromId         String
+  from           User        @relation(fields: [fromId], references: [id])
+  toConnectionId String
+  // to      Contacts @relation(fields: [toId], references: [id])
+  toConnection   Connections @relation(fields: [toConnectionId], references: [id])
+  message        String?
+  updateAt       DateTime    @updatedAt
+}
