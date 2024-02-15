@@ -35,15 +35,35 @@ const ChatSection = (props: Props) => {
         const chatId = obj?.targetChatId;
         const messageData = obj?.message;
 
-        console.log('Pesan -> ', obj);
+        // console.log('Pesan -> ', obj);
 
         queryClient.setQueryData(['chatList', chatId], (old: any) => {
           if (old) return [...old, messageData];
           return [];
         });
-      });
-      socket.on('message:response' + dataSession?.user?.name, (res) => {
-        console.log(res);
+
+        queryClient.setQueryData(['contact'], (old: any) => {
+          console.log(old);
+
+          if (old) {
+            const findConnection = old?.find((item: any) => item?.id == chatId);
+            console.log(findConnection);
+
+            if (findConnection) {
+              return old;
+            } else {
+              const newData = {
+                id: chatId,
+                name: '',
+                type: 'personal',
+                user: [{user: {username: messageData?.from?.username}}],
+              };
+
+              return [...old, newData];
+            }
+          }
+          return [];
+        });
       });
     };
   }, []);

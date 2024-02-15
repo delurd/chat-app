@@ -19,6 +19,8 @@ const ContactSection = (props: Props) => {
       fetchBasic('/api/contact', 'GET').then((res) => res?.data),
   });
 
+  console.log(dataContact);
+
   return (
     <div
       className="rounded-tr-[30px] flex flex-col w-60 max-h-[500px] relative"
