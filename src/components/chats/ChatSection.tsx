@@ -13,6 +13,7 @@ const ChatSection = (props: Props) => {
   const queryClient = useQueryClient();
   const {data: dataSession} = useSession();
   const [messageInput, setMessageInput] = useState('');
+  const [loadingSend, setLoadingSend] = useState(false);
 
   const {data: dataListChat, refetch} = useQuery({
     queryKey: ['chatList', props.selectedContact?.chatId ?? ''],
@@ -34,7 +35,7 @@ const ChatSection = (props: Props) => {
         const chatId = obj?.targetChatId;
         const messageData = obj?.message;
 
-        // console.log('Pesan -> ', obj);
+        console.log('Pesan -> ', obj);
 
         queryClient.setQueryData(['chatList', chatId], (old: any) => {
           if (old) return [...old, messageData];
@@ -75,6 +76,7 @@ const ChatSection = (props: Props) => {
   };
 
   const sendSocket = async (dataChat?: any) => {
+    setLoadingSend(true);
     const _socket = socket;
     const res = await _socket.emitWithAck('message:send', {
       target: props.selectedContact?.chatName,
@@ -92,6 +94,7 @@ const ChatSection = (props: Props) => {
     } else {
       console.log(res);
     }
+    setLoadingSend(false);
   };
 
   return (
@@ -158,19 +161,23 @@ const ChatSection = (props: Props) => {
               disabled={!messageInput.length}
             >
               {/* <b>{'>'}</b> */}
-              <svg
-                width="17"
-                height="17"
-                viewBox="0 0 17 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M15.165 6.56641C16.7435 7.27196 16.7435 9.51266 15.165 10.2182L2.91117 15.6954C1.0363 16.5335 -0.614451 14.4229 0.736396 12.8761C4.95939 8.04042 4.92085 8.89851 0.620785 3.87074C-0.709105 2.31579 0.944824 0.21024 2.8128 1.04519L15.165 6.56641Z"
-                  fill="#414141"
-                  fillOpacity="0.6"
-                />
-              </svg>
+              {loadingSend ? (
+                <b>...</b>
+              ) : (
+                <svg
+                  width="17"
+                  height="17"
+                  viewBox="0 0 17 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M15.165 6.56641C16.7435 7.27196 16.7435 9.51266 15.165 10.2182L2.91117 15.6954C1.0363 16.5335 -0.614451 14.4229 0.736396 12.8761C4.95939 8.04042 4.92085 8.89851 0.620785 3.87074C-0.709105 2.31579 0.944824 0.21024 2.8128 1.04519L15.165 6.56641Z"
+                    fill="#414141"
+                    fillOpacity="0.6"
+                  />
+                </svg>
+              )}
             </button>
           </div>
         </form>

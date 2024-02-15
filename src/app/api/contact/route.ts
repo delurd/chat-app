@@ -7,14 +7,16 @@ export const GET = async (req: NextRequest) => {
     if (!UserSession)
         return NextResponse.json({ message: 'not authenticate!' }, { status: 401 });
 
+    const userId = UserSession.id
+
     try {
         const res = await prisma.connections.findMany({
             where: {
-                user: { some: { userId: userSession?.id } },
+                user: { some: { userId } },
                 chats: {
                     some: {
                         OR: [
-                            { fromId: UserSession?.id, message: '' },
+                            { fromId: userId, message: '' },
                             { message: { not: '' } }
                         ]
                     }
