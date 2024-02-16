@@ -91,6 +91,14 @@ const ChatSection = (props: Props) => {
         'POST',
         JSON.stringify({message})
       ).then((res) => res?.data),
+
+    onSuccess: async (data) => {
+      queryClient.setQueryData(
+        ['chatList', props.selectedContact?.chatId],
+        (old: any) => [...old, data]
+      );
+      setMessageInput('');
+    },
   });
 
   const actionSendChat = async (formData: FormData) => {
@@ -107,7 +115,8 @@ const ChatSection = (props: Props) => {
         id: (+new Date()).toString(),
       };
 
-      sendSocket(dataChat);
+      mutationSendChat.mutate(message);
+      // sendSocket(dataChat);
     }
   };
 
@@ -222,7 +231,7 @@ const ChatSection = (props: Props) => {
               disabled={!messageInput.length}
             >
               {/* <b>{'>'}</b> */}
-              {loadingSend ? (
+              {mutationSendChat.isPending ? (
                 <Loader size="small" />
               ) : (
                 <svg

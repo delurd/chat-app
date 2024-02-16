@@ -65,9 +65,9 @@ export default function Home() {
         )}
         {/* </AnimatePresence> */}
       </div>
-      {/* <div className="sm:absolute bottom-0 right-4 mb-4 py-2 px-4 text-[grey] shadow-xl rounded-full max-sm:inset-x-0">
+      <div className="sm:absolute bottom-0 right-4 mb-4 py-2 px-4 text-[grey] shadow-xl rounded-full max-sm:inset-x-0">
         Real-time chat is not available due to hosting limitations
-      </div> */}
+      </div>
     </main>
   );
 }
