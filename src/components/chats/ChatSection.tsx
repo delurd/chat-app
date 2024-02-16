@@ -6,7 +6,8 @@ import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {fetchBasic} from '@/hooks/fetch/useFetch';
 import {useSession} from 'next-auth/react';
 import socketClient, {socket} from '@/app/(pages)/action';
-import {Variants, motion} from 'framer-motion';
+import {AnimatePresence, Variants, motion} from 'framer-motion';
+import Loader from '../ui/loader/Loader';
 
 type Props = {selectedContact?: any};
 
@@ -16,8 +17,8 @@ const chatVarian: Variants = {
 };
 
 const chatContainerVarian: Variants = {
-  show: {opacity: 1, transition: {delayChildren: 0.3, staggerChildren: 0.05}},
-  hide: {opacity: 1},
+  show: {transition: {delayChildren: 0.3, staggerChildren: 0.05}},
+  hide: {},
 };
 
 const ChatSection = (props: Props) => {
@@ -133,55 +134,61 @@ const ChatSection = (props: Props) => {
   };
 
   return (
-    <div className="relative min-h-[554px]">
+    <div className="relative min-h-[554px] w-96">
       <div className="flex justify-end">
         <div className="bg-[#FED261] min-h-14 p-4 w-1/2 rounded-tl-[30px] flex-center">
           <b>{props.selectedContact?.chatName}</b>
         </div>
       </div>
       <div
-        className="w-96 h-96 rounded-tl-[30px] overflow-y-scroll overflow-x-hidden flex flex-col-reverse relative"
+        className="h-96 rounded-tl-[30px] overflow-y-scroll overflow-x-hidden flex flex-col-reverse relative"
         style={{
           backgroundImage: 'linear-gradient(#F9F9F9 50%, transparent 90%)',
         }}
       >
-        {props.selectedContact?.chatName ? (
-          loadingListChat ? (
-            <p className="text-center absolute inset-0 m-5">Load...</p>
+        <AnimatePresence>
+          {props.selectedContact?.chatName ? (
+            loadingListChat ? (
+              <div key={'loading'} className="absolute inset-0 flex-center m-5">
+                <Loader size="medium" />
+              </div>
+            ) : (
+              <motion.div
+                key={'chatList'}
+                className="p-6 space-y-4 "
+                initial={'hide'}
+                variants={chatContainerVarian}
+                animate={'show'}
+              >
+                {dataListChat?.map((item: any, idx: number) => {
+                  if (!item?.message) return <div key={item?.id ?? idx}></div>;
+                  return (
+                    <motion.div variants={chatVarian} key={item?.id ?? idx}>
+                      <ChatItem
+                        data={item}
+                        type={
+                          item?.from?.username !== dataSession?.user?.name
+                            ? 'in'
+                            : 'out'
+                        }
+                      />
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            )
           ) : (
             <motion.div
-              className="p-6 space-y-4"
-              initial={'hide'}
-              variants={chatContainerVarian}
-              animate={'show'}
+              initial={{y: 50, opacity: 0}}
+              animate={{y: 0, opacity: 1}}
+              transition={{ease: 'easeOut'}}
+              className="flex-center h-full"
+              key={'noSelect'}
             >
-              {dataListChat?.map((item: any, idx: number) => {
-                if (!item?.message) return <div key={item?.id ?? idx}></div>;
-                return (
-                  <motion.div variants={chatVarian} key={item?.id ?? idx}>
-                    <ChatItem
-                      data={item}
-                      type={
-                        item?.from?.username !== dataSession?.user?.name
-                          ? 'in'
-                          : 'out'
-                      }
-                    />
-                  </motion.div>
-                );
-              })}
+              <Image src={'/icons/logo.png'} alt="" height={90} width={90} />
             </motion.div>
-          )
-        ) : (
-          <motion.div
-            initial={{y: 50, opacity: 0}}
-            animate={{y: 0, opacity: 1}}
-            transition={{ease: 'easeOut'}}
-            className="flex-center h-full"
-          >
-            <Image src={'/icons/logo.png'} alt="" height={90} width={90} />
-          </motion.div>
-        )}
+          )}
+        </AnimatePresence>
       </div>
       {props.selectedContact?.chatName ? (
         <motion.form
@@ -201,8 +208,10 @@ const ChatSection = (props: Props) => {
             <span></span>
             <button
               className={
-                'w-12 h-12 flex-center rounded-full duration-200 bg-[#FED261] ' +
-                (messageInput.length ? 'active:scale-95 ' : 'opacity-70')
+                'w-12 h-12 flex-center rounded-full duration-300 bg-[#FED261] ' +
+                (messageInput.length
+                  ? 'active:scale-95 hover:scale-110'
+                  : 'opacity-70')
               }
               style={
                 messageInput.length
@@ -214,11 +223,11 @@ const ChatSection = (props: Props) => {
             >
               {/* <b>{'>'}</b> */}
               {loadingSend ? (
-                <b>...</b>
+                <Loader size="small" />
               ) : (
                 <svg
-                  width="17"
-                  height="17"
+                  width="16"
+                  height="16"
                   viewBox="0 0 17 16"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"

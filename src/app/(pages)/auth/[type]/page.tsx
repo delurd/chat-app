@@ -1,4 +1,5 @@
 'use client';
+import Loader from '@/components/ui/loader/Loader';
 import {fetchBasic} from '@/hooks/fetch/useFetch';
 import {useMutation} from '@tanstack/react-query';
 import {motion} from 'framer-motion';
@@ -225,7 +226,7 @@ const AuthPage = ({params}: {params: {type: string}}) => {
             style={{boxShadow: '0 13px 25px rgba(254, 210, 97, 0.4'}}
           >
             {isLoading ? (
-              <p>Loading...</p>
+              <Loader size="small" />
             ) : (
               <b>
                 {params.type

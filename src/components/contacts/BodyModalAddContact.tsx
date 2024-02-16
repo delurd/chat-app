@@ -12,7 +12,7 @@ const BodyModalAddContact = (props: Props) => {
       fetchBasic('/api/contact', 'POST', JSON.stringify({username})).then(
         (res) => res?.data
       ),
-    onSuccess: async (data) => {      
+    onSuccess: async (data) => {
       queryClient.setQueryData(['contact'], (old: any[]) => [...old, data]);
     },
     onError: async (error) => 'gagal',
@@ -52,7 +52,7 @@ const BodyModalAddContact = (props: Props) => {
           </button>
         </div>
       </form>
-      <div className="flex items-center gap-4 my-8 text-[grey]">
+      {/* <div className="flex items-center gap-4 my-8 text-[grey]">
         <p>Invite friend</p>
         <hr className="flex-1" />
       </div>
@@ -72,7 +72,7 @@ const BodyModalAddContact = (props: Props) => {
             Invite
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

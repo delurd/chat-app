@@ -1,6 +1,7 @@
+import {useDimension} from '@/hooks/useDimension';
 import {AnimatePresence, motion} from 'framer-motion';
 import Image from 'next/image';
-import React from 'react';
+import React, {useRef} from 'react';
 
 type Props = {
   data?: any;
@@ -9,8 +10,12 @@ type Props = {
 };
 
 const ContactItem = (props: Props) => {
+  const buttonRef = useRef(null);
+  const {width: buttonWidth} = useDimension(buttonRef);
+
   return (
     <button
+      ref={buttonRef}
       onClick={props.onClick}
       className={`p-4 w-full rounded-[40px] rounded-br-[0] border-b text-left cursor-pointer duration-200 relative overflow-hidden border-[#FED261] ${
         props.selectedUser == props.data?.username
@@ -30,7 +35,7 @@ const ContactItem = (props: Props) => {
             key={'btnbg'}
             className="bg-[#FED261] absolute z-0 -inset-1 "
             initial={{
-              x: 200,
+              x: buttonWidth + 50,
               y: 50,
               // opacity: 0,
               // scale: 0,
@@ -48,13 +53,13 @@ const ContactItem = (props: Props) => {
               inset: '-40% -4% -30% -4%',
             }}
             exit={{
-              x: -200,
+              x: -(buttonWidth + 50),
               y: 50,
               // opacity: 0,
               borderRadius: 100,
               borderBottomRightRadius: 100,
             }}
-            transition={{ease: 'easeOut', duration: 0.2}}
+            transition={{ease: 'easeOut', duration: 0.3}}
           ></motion.div>
         ) : null}
       </AnimatePresence>

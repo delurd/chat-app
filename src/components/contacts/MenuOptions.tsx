@@ -31,7 +31,7 @@ const MenuOptions = (props: Props) => {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute  z-40 mt-2 bg-white overflow-hidden rounded-2xl p-4 shadow-lg min-w-max">
+              <Popover.Panel className="absolute max-sm:right-0 z-40 mt-2 bg-white overflow-hidden rounded-2xl p-4 shadow-lg min-w-max">
                 <div>
                   <button
                     className="w-full p-2 hover:bg-slate-50 rounded-md text-left"

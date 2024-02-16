@@ -5,6 +5,7 @@ import {useQuery} from '@tanstack/react-query';
 import {fetchBasic} from '@/hooks/fetch/useFetch';
 import {useSession} from 'next-auth/react';
 import {Variants, motion} from 'framer-motion';
+import Loader from '../ui/loader/Loader';
 
 type Props = {
   selectedContact?: any;
@@ -32,7 +33,7 @@ const ContactSection = (props: Props) => {
 
   return (
     <div
-      className="rounded-tr-[30px] flex flex-col w-60 max-h-[500px] relative"
+      className="rounded-tr-[30px] flex flex-col w-full max-w-[400px] sm:w-60 h-[554px] relative"
       style={{
         backgroundImage: 'linear-gradient(#F9F9F9, transparent 50%)',
       }}
@@ -48,7 +49,9 @@ const ContactSection = (props: Props) => {
         }}
       >
         {loadingContact ? (
-          <p className="text-center">Load...</p>
+          <div className="flex-center">
+            <Loader size="medium" />
+          </div>
         ) : (
           <motion.div
             className="space-y-2 pt-1"
