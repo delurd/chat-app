@@ -6,8 +6,19 @@ import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {fetchBasic} from '@/hooks/fetch/useFetch';
 import {useSession} from 'next-auth/react';
 import socketClient, {socket} from '@/app/(pages)/action';
+import {Variants, motion} from 'framer-motion';
 
 type Props = {selectedContact?: any};
+
+const chatVarian: Variants = {
+  show: {opacity: 1, y: 0, transition: {ease: 'easeOut'}},
+  hide: {opacity: 0, y: 20},
+};
+
+const chatContainerVarian: Variants = {
+  show: {opacity: 1, transition: {delayChildren: 0.3, staggerChildren: 0.05}},
+  hide: {opacity: 1},
+};
 
 const ChatSection = (props: Props) => {
   const queryClient = useQueryClient();
@@ -15,7 +26,11 @@ const ChatSection = (props: Props) => {
   const [messageInput, setMessageInput] = useState('');
   const [loadingSend, setLoadingSend] = useState(false);
 
-  const {data: dataListChat, refetch} = useQuery({
+  const {
+    data: dataListChat,
+    isLoading: loadingListChat,
+    refetch,
+  } = useQuery({
     queryKey: ['chatList', props.selectedContact?.chatId ?? ''],
     queryFn: async () =>
       fetchBasic('/api/chat/' + props.selectedContact?.chatId, 'GET').then(
@@ -125,36 +140,53 @@ const ChatSection = (props: Props) => {
         </div>
       </div>
       <div
-        className="w-96 h-96 rounded-tl-[30px] overflow-y-scroll overflow-x-hidden flex flex-col-reverse"
+        className="w-96 h-96 rounded-tl-[30px] overflow-y-scroll overflow-x-hidden flex flex-col-reverse relative"
         style={{
           backgroundImage: 'linear-gradient(#F9F9F9 50%, transparent 90%)',
         }}
       >
         {props.selectedContact?.chatName ? (
-          <div className="p-6 space-y-4">
-            {dataListChat?.map((item: any, idx: number) => {
-              if (!item?.message) return <div key={item?.id ?? idx}></div>;
-              return (
-                <ChatItem
-                  key={item?.id ?? idx}
-                  data={item}
-                  type={
-                    item?.from?.username !== dataSession?.user?.name
-                      ? 'in'
-                      : 'out'
-                  }
-                />
-              );
-            })}
-          </div>
+          loadingListChat ? (
+            <p className="text-center absolute inset-0 m-5">Load...</p>
+          ) : (
+            <motion.div
+              className="p-6 space-y-4"
+              initial={'hide'}
+              variants={chatContainerVarian}
+              animate={'show'}
+            >
+              {dataListChat?.map((item: any, idx: number) => {
+                if (!item?.message) return <div key={item?.id ?? idx}></div>;
+                return (
+                  <motion.div variants={chatVarian} key={item?.id ?? idx}>
+                    <ChatItem
+                      data={item}
+                      type={
+                        item?.from?.username !== dataSession?.user?.name
+                          ? 'in'
+                          : 'out'
+                      }
+                    />
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          )
         ) : (
-          <div className="flex-center h-full">
+          <motion.div
+            initial={{y: 50, opacity: 0}}
+            animate={{y: 0, opacity: 1}}
+            transition={{ease: 'easeOut'}}
+            className="flex-center h-full"
+          >
             <Image src={'/icons/logo.png'} alt="" height={90} width={90} />
-          </div>
+          </motion.div>
         )}
       </div>
       {props.selectedContact?.chatName ? (
-        <form
+        <motion.form
+          initial={{opacity: 0, y: -100}}
+          animate={{opacity: 1, y: 0}}
           action={actionSendChat}
           className="rounded-tl-[30px] rounded-br-[30px] overflow-hidden p-6 flex gap-6 relative z-50"
           style={{boxShadow: '0 13px 35px rgba(0, 0, 0, 0.1'}}
@@ -200,7 +232,7 @@ const ChatSection = (props: Props) => {
               )}
             </button>
           </div>
-        </form>
+        </motion.form>
       ) : null}
     </div>
   );

@@ -1,3 +1,4 @@
+import {AnimatePresence, motion} from 'framer-motion';
 import Image from 'next/image';
 import React from 'react';
 
@@ -11,10 +12,10 @@ const ContactItem = (props: Props) => {
   return (
     <button
       onClick={props.onClick}
-      className={`p-4 w-full rounded-[40px] rounded-br-[0] border-b text-left cursor-pointer flex items-center gap-2 duration-300 ${
+      className={`p-4 w-full rounded-[40px] rounded-br-[0] border-b text-left cursor-pointer duration-200 relative overflow-hidden border-[#FED261] ${
         props.selectedUser == props.data?.username
-          ? 'bg-[#FED261] relative z-10 border-transparent'
-          : 'border-[#FED261]'
+          ? 'relative z-10 scale-105'
+          : ''
       }`}
       style={{
         boxShadow:
@@ -23,14 +24,50 @@ const ContactItem = (props: Props) => {
             : 'none',
       }}
     >
-      <img
-        src={'/profile.png'}
-        // width={50}
-        // height={50}
-        alt="profile"
-        className="rounded-full bg-red-50 aspect-square w-10 object-cover"
-      />
-      <b>{props.data?.username}</b>
+      <AnimatePresence>
+        {props.selectedUser == props.data?.username ? (
+          <motion.div
+            key={'btnbg'}
+            className="bg-[#FED261] absolute z-0 -inset-1 "
+            initial={{
+              x: 200,
+              y: 50,
+              // opacity: 0,
+              // scale: 0,
+              borderRadius: 100,
+              borderBottomRightRadius: 100,
+              inset: '10% 50% 10% 10%',
+            }}
+            animate={{
+              x: 0,
+              y: 0,
+              // opacity: 1,
+              // scale: 1,
+              borderRadius: 40,
+              borderBottomRightRadius: 0,
+              inset: '-40% -4% -30% -4%',
+            }}
+            exit={{
+              x: -200,
+              y: 50,
+              // opacity: 0,
+              borderRadius: 100,
+              borderBottomRightRadius: 100,
+            }}
+            transition={{ease: 'easeOut', duration: 0.2}}
+          ></motion.div>
+        ) : null}
+      </AnimatePresence>
+      <div className="z-[10] flex items-center gap-2 relative">
+        <img
+          src={'/profile.png'}
+          // width={50}
+          // height={50}
+          alt="profile"
+          className="rounded-full bg-red-50 aspect-square w-10 object-cover"
+        />
+        <b>{props.data?.username}</b>
+      </div>
     </button>
   );
 };
