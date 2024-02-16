@@ -7,10 +7,15 @@ import {io} from 'socket.io-client';
 import socketClient, {socket} from '../action';
 import {useSession} from 'next-auth/react';
 import {AnimatePresence, motion} from 'framer-motion';
+import {notFound} from 'next/navigation';
 
 type Props = {};
 
 const OptionsPage = (props: Props) => {
+  if (true) {
+    notFound();
+  }
+
   const {data} = useSession();
   const [inputVal, setInputVal] = useState('');
   const [isActive, setIsActive] = useState(false);
