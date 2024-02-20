@@ -8,6 +8,8 @@ import {useSession} from 'next-auth/react';
 import socketClient, {socket} from '@/app/(pages)/action';
 import {AnimatePresence, Variants, motion} from 'framer-motion';
 import Loader from '../ui/loader/Loader';
+import ModalTemplate from '../ui/modal/ModalTemplate';
+import BodyModalProfileContact from './BodyModalProfileContact';
 
 type Props = {selectedContact?: any};
 
@@ -26,6 +28,7 @@ const ChatSection = (props: Props) => {
   const {data: dataSession} = useSession();
   const [messageInput, setMessageInput] = useState('');
   const [loadingSend, setLoadingSend] = useState(false);
+  const [isShowModalProfile, setIsShowModalProfile] = useState(false);
 
   const {
     data: dataListChat,
@@ -145,7 +148,14 @@ const ChatSection = (props: Props) => {
   return (
     <div className="relative min-h-[554px] w-96">
       <div className="flex justify-end">
-        <div className="bg-[#FED261] min-h-14 p-4 w-1/2 rounded-tl-[30px] flex-center">
+        <div
+          onClick={() => setIsShowModalProfile(true)}
+          onKeyUp={(e) => {
+            e.key == 'Enter' && setIsShowModalProfile(true);
+          }}
+          tabIndex={0}
+          className="bg-[#FED261] min-h-14 p-4 w-1/2 rounded-tl-[30px] flex-center cursor-pointer"
+        >
           <b>{props.selectedContact?.chatName}</b>
         </div>
       </div>
@@ -252,6 +262,18 @@ const ChatSection = (props: Props) => {
           </div>
         </motion.form>
       ) : null}
+
+      <ModalTemplate
+        isModalOpen={isShowModalProfile}
+        closeModal={() => setIsShowModalProfile(false)}
+        title="Profile"
+      >
+        <BodyModalProfileContact
+          username={props.selectedContact?.chatName}
+          type={props.selectedContact?.type}
+          chatId={props.selectedContact?.chatId}
+        />
+      </ModalTemplate>
     </div>
   );
 };

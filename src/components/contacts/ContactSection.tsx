@@ -63,8 +63,14 @@ const ContactSection = (props: Props) => {
               const findTarget = val?.user?.find(
                 (item: any) => item?.user?.username !== dataSession?.user?.name
               );
-              const username = findTarget?.user?.username;
-              const _data = {chatId: val?.id, chatName: username};
+              const username = val?.name
+                ? val.name
+                : findTarget?.user?.username;
+              const _data = {
+                chatId: val?.id,
+                chatName: username,
+                type: val?.type,
+              };
 
               return (
                 <motion.div variants={contactVarian} key={idx}>

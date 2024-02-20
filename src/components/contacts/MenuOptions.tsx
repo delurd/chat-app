@@ -3,12 +3,14 @@ import React, {Fragment, useState} from 'react';
 import ModalTemplate from '../ui/modal/ModalTemplate';
 import BodyModalSettings from './BodyModalSettings';
 import BodyModalAddContact from './BodyModalAddContact';
+import BodyModalCreateGroup from './BodyModalCreateGroup';
 
 type Props = {};
 
 const MenuOptions = (props: Props) => {
   const [isShowModalSetting, setIsShowModalSetting] = useState(false);
   const [isShowModalAddContact, setIsShowModalAddContact] = useState(false);
+  const [isShowModalCreateGroup, setIsShowModalCreateGroup] = useState(false);
 
   return (
     <>
@@ -43,6 +45,14 @@ const MenuOptions = (props: Props) => {
                 <div>
                   <button
                     className="w-full p-2 hover:bg-slate-50 rounded-md text-left"
+                    onClick={() => setIsShowModalCreateGroup(true)}
+                  >
+                    Create Group
+                  </button>
+                </div>
+                <div>
+                  <button
+                    className="w-full p-2 hover:bg-slate-50 rounded-md text-left"
                     onClick={() => setIsShowModalSetting(true)}
                   >
                     Settings
@@ -66,6 +76,13 @@ const MenuOptions = (props: Props) => {
         title="Add Contact"
       >
         <BodyModalAddContact />
+      </ModalTemplate>
+      <ModalTemplate
+        isModalOpen={isShowModalCreateGroup}
+        closeModal={() => setIsShowModalCreateGroup(false)}
+        title="Create Group"
+      >
+        <BodyModalCreateGroup />
       </ModalTemplate>
     </>
   );

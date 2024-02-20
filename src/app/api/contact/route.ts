@@ -13,17 +13,25 @@ export const GET = async (req: NextRequest) => {
         const res = await prisma.connections.findMany({
             where: {
                 user: { some: { userId } },
-                chats: {
-                    some: {
-                        OR: [
-                            { fromId: userId, message: '' },
-                            { message: { not: '' } }
-                        ]
+                OR: [
+                    {
+                        type: 'personal', chats: {
+                            some: {
+                                OR: [
+                                    { fromId: userId, message: '' },
+                                    { message: { not: '' } }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        type: 'group'
                     }
-                }
+                ],
+
             },
             include: {
-                user: { select: { user: { select: { username: true } } } }
+                user: { select: { user: { select: { username: true, id: true } } } }
             }
         })
 
@@ -79,7 +87,7 @@ export const POST = async (req: NextRequest) => {
                     chats: { create: { fromId: userId, message: "" } }
                 },
                 include: {
-                    user: { select: { user: { select: { username: true } } } }
+                    user: { select: { user: { select: { username: true, id: true } } } }
                 }
             })
 
