@@ -3,7 +3,7 @@ import { host } from "@/utils/variables";
 import { getServerSession } from "next-auth";
 
 
-export const fetchBasic = async (url: string, method?: 'GET' | 'POST', body?: BodyInit) => {
+export const fetchBasic = async (url: string, method?: 'GET' | 'POST' | 'PUT' | 'DELETE', body?: BodyInit) => {
 
     return await fetch(host + url, { method, body }).then(async (res) => {
         if (!res.ok) {

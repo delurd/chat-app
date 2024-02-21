@@ -149,9 +149,13 @@ const ChatSection = (props: Props) => {
     <div className="relative min-h-[554px] w-96">
       <div className="flex justify-end">
         <div
-          onClick={() => setIsShowModalProfile(true)}
+          onClick={() => {
+            props.selectedContact?.chatId && setIsShowModalProfile(true);
+          }}
           onKeyUp={(e) => {
-            e.key == 'Enter' && setIsShowModalProfile(true);
+            props.selectedContact?.chatId &&
+              e.key == 'Enter' &&
+              setIsShowModalProfile(true);
           }}
           tabIndex={0}
           className="bg-[#FED261] min-h-14 p-4 w-1/2 rounded-tl-[30px] flex-center cursor-pointer"
@@ -269,9 +273,7 @@ const ChatSection = (props: Props) => {
         title="Profile"
       >
         <BodyModalProfileContact
-          username={props.selectedContact?.chatName}
-          type={props.selectedContact?.type}
-          chatId={props.selectedContact?.chatId}
+          closeModal={() => setIsShowModalProfile(false)}
         />
       </ModalTemplate>
     </div>
